@@ -1,26 +1,132 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-bg: #2F3028;
+  --color-surface: #505143;
+  --color-fg: #D5CCAB;
+  --color-muted: #A3A289;
+  --color-border: #878568;
+  --color-hover: #e8e6d8;
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    font-family: var(--font-mono), monospace;
+  }
+  
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  * {
+    @apply border-border/30;
+    box-sizing: border-box;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .terminal-card {
+    @apply rounded-none border border-solid border-border p-6 bg-surface;
+  }
+  
+  .btn-bracket {
+    @apply px-3 py-1 font-mono text-sm transition-colors cursor-pointer 
+             select-none whitespace-nowrap 
+             rounded-none border-2 border-solid;
+  }
+  
+  .btn-bracket--primary {
+    background-color: var(--color-fg);
+    color: var(--color-bg);
+    border-color: var(--color-fg);
+    &:hover {
+      border-color: var(--color-primary);
+    }
+  }
+  
+  .btn-bracket--secondary {
+    background-color: var(--color-muted);
+    color: var(--color-fg);
+    border-color: mix(var(--color-border), transparent, 60%);
+    opacity: 0.3;
+  }
+  
+  .btn-bracket--hollow {
+    background-color: var(--color-bg);
+    color: var(--color-border);
+    border-color: var(--color-border);
+  }
+
+.input-terminal {
+  @apply rounded-none border-2 border-dashed border-muted px-3 py-2 
+         bg-bg text-fg placeholder:text-muted/60 outline-none focus:outline-none;
+}
+
+  .divider {
+    @apply border-t border-border my-6;
+  }
+
+  .table-row-hover:hover {
+    background-color: var(--color-hover);
+  }
+  
+  h2 {
+    @apply text-2xl font-bold tracking-normal mb-8 scroll-mt-32;
+  }
+
+  .link-terminal {
+    color: var(--color-accent);
+    @apply underline-offset-4 decoration-dotted;
+  }
+
+  .placeholder-mono {
+    opacity: 0.6;
+  }
+}
+
+@utility terminal-bg { background-color: var(--color-bg); }
+@utility terminal-surface { background-color: var(--color-surface); }
+@utility terminal-fg { color: var(--color-fg); }
+@utility terminal-muted-text { color: var(--color-muted); }
+@utility terminal-border { border-color: var(--color-border); }
+
+.terminal-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+.terminal-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.terminal-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.terminal-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 0;
+}
+
+.terminal-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted);
+}
+
+.crt-scanlines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
 }
