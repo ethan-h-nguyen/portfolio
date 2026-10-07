@@ -6,14 +6,16 @@ import About from '@/components/About';
 import Projects from '@/components/Projects';
 import Skills from '@/components/Skills';
 import Experience from '@/components/Experience';
+import Info from '@/components/Info';
 
-type ViewKey = 'about' | 'projects' | 'skills' | 'experience';
+type ViewKey = 'about' | 'projects' | 'skills' | 'experience' | 'info';
 
 const VALID_VIEWS: ViewKey[] = [
   'about',
   'projects',
   'skills',
   'experience',
+  'info',
 ];
 
 const NAV_ITEMS: { key: ViewKey; label: string }[] = [
@@ -21,6 +23,7 @@ const NAV_ITEMS: { key: ViewKey; label: string }[] = [
   { key: 'projects', label: 'Projects' },
   { key: 'skills', label: 'Skills' },
   { key: 'experience', label: 'Experience' },
+  { key: 'info', label: 'Info' },
 ];
 
 function getViewFromHash(): ViewKey {
@@ -80,8 +83,9 @@ export default function AppShell() {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent): void => {
       const key = event.key;
+      const active = document.activeElement as HTMLElement | null;
       
-      // Handle Help keys when open before editable check
+      // Handle Help keys when open before other checks
       if (isHelpOpen && !event.ctrlKey && !event.altKey && !event.metaKey) {
         if (key === 'Escape' || key === '?') {
           setIsHelpOpen(false);
@@ -89,7 +93,7 @@ export default function AppShell() {
         }
         
         const keyNumber = parseInt(key, 10);
-        if (keyNumber >= 1 && keyNumber <= 4) {
+        if (keyNumber >= 1 && keyNumber <= 5) {
           setIsHelpOpen(false);
           
           const targetView: ViewKey = NAV_ITEMS[keyNumber - 1].key;
@@ -107,40 +111,54 @@ export default function AppShell() {
         return;
       }
 
-      const active = document.activeElement as HTMLElement | null;
+      // Handle ? from Help trigger button - check before editable protection
+      const isHelpTrigger = key === '?' && active?.hasAttribute('data-help-trigger') && !event.ctrlKey && !event.altKey && !event.metaKey;
 
-      if (
-        key === '?' &&
-        active?.hasAttribute('data-help-trigger') &&
-        !event.ctrlKey &&
-        !event.altKey &&
-        !event.metaKey
-      ) {
+      if (isHelpTrigger) {
         setIsHelpOpen(true);
         return;
       }
 
-      if (activeElementIsEditable()) {
+      // Handle numeric shortcuts 1–5 from Help trigger button - check before editable protection
+      const n = parseInt(key, 10);
+      const isNumericFromHelpTrigger = 
+        n >= 1 && 
+        n <= 5 && 
+        active?.hasAttribute('data-help-trigger') && 
+        !event.ctrlKey && 
+        !event.altKey && 
+        !event.metaKey;
+
+      if (isNumericFromHelpTrigger) {
+        const targetView: ViewKey = NAV_ITEMS[n - 1].key;
+        setActiveView(targetView);
+        const nextHash = `#${targetView}`;
+        if (window.location.hash !== nextHash) {
+          window.history.pushState(null, '', nextHash);
+        }
         return;
       }
 
+      // Check modifier keys and fall back to global ? toggle only for non-Help-trigger elements
       if (event.ctrlKey || event.altKey || event.metaKey) {
         return;
       }
 
+      // Toggle ? for non-help-trigger elements (editables already handled above)
       if (key === '?') {
         setIsHelpOpen((prev) => !prev);
         return;
       }
 
-      const keyNumber = parseInt(event.key, 10);
-      if (isNaN(keyNumber) || keyNumber < 1 || keyNumber > 4) {
+      // Global numeric handling for page focus only
+      const globalN = parseInt(key, 10);
+      if (isNaN(globalN) || globalN < 1 || globalN > 5) {
         return;
       }
 
       setIsHelpOpen(false);
       
-      const targetView: ViewKey = NAV_ITEMS[keyNumber - 1].key;
+      const targetView: ViewKey = NAV_ITEMS[globalN - 1].key;
       
       setActiveView(targetView);
       
@@ -175,6 +193,8 @@ export default function AppShell() {
         return <Skills />;
       case 'experience':
         return <Experience />;
+      case 'info':
+        return <Info />;
       case 'about':
       default:
         return <About />;
@@ -255,39 +275,6 @@ export default function AppShell() {
 </div>
 
           <div className="flex items-center gap-4 text-muted">
-            <a
-              href="https://github.com/ethan-h-nguyen"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-fg transition-colors"
-            >
-              GitHub
-            </a>
-
-            <span className="text-border">|</span>
-
-            <a
-              href="https://www.linkedin.com/in/ehn-dev/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-fg transition-colors"
-            >
-              LinkedIn
-            </a>
-
-            <span className="text-border">|</span>
-
-            <a
-              href="/Ethan_Resume_V4-3.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-fg transition-colors"
-            >
-              Resume
-            </a>
-      
-            <span className="text-border">|</span>
-
             <button
               data-help-trigger
               onClick={() => setIsHelpOpen(true)}

@@ -92,12 +92,16 @@ export default function HelpOverlay({ onClose }: { onClose: () => void }) {
                 <td className="py-1.5 pr-4 font-semibold text-fg">3</td>
                 <td className="py-1.5">Skills</td>
               </tr>
-              <tr className="border-b border-border">
-                <td className="py-1.5 pr-4 font-semibold text-fg">4</td>
-                <td className="py-1.5">Experience</td>
-              </tr>
-              <tr className="border-b border-border">
-                <td className="py-1.5 pr-4 font-semibold text-fg">?</td>
+               <tr className="border-b border-border">
+                 <td className="py-1.5 pr-4 font-semibold text-fg">4</td>
+                 <td className="py-1.5">Experience</td>
+               </tr>
+               <tr className="border-b border-border">
+                 <td className="py-1.5 pr-4 font-semibold text-fg">5</td>
+                 <td className="py-1.5">Info</td>
+               </tr>
+               <tr className="border-b border-border">
+                 <td className="py-1.5 pr-4 font-semibold text-fg">?</td>
                 <td className="py-1.5">Help</td>
               </tr>
               <tr className="border-b border-border">
